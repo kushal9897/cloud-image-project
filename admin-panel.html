@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin-style.css">
+    <style>
+
+
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    background-color: #444;
+    padding: 15px;
+}
+
+nav button {
+    background-color: #28a745;
+    border: none;
+    padding: 12px 20px;
+    margin: 0 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav button:hover {
+    background-color: #218838;
+}
+
+/* Add News Form */
+#add-news-form {
+    width: 50%;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+#add-news-form h2 {
+    text-align: center;
+}
+
+#add-news-form input, #add-news-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#add-news-form button {
+    width: 100%;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#add-news-form button:hover {
+    background: #218838;
+}
+
+/* News Table */
+.news-table-container {
+    margin: 20px auto;
+    width: 90%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #333;
+    color: white;
+}
+
+td img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+td button {
+    background-color: #FF4C4C;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+td button:hover {
+    background-color: #cc0000;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Admin Panel - News Management</h1>
+    </header>
+
+    <nav>
+        <button onclick="toggleAddNewsForm()">Add New News</button>
+    </nav>
+
+    <!-- Add News Form -->
+    <div id="add-news-form" class="hidden">
+        <h2>Add New News</h2>
+        <input type="text" id="news-title" placeholder="News Title" required>
+        <input type="text" id="news-category" placeholder="Category" required>
+        <input type="url" id="news-image" placeholder="Image URL" required>
+        <textarea id="news-content" placeholder="News Content" required></textarea>
+        <button onclick="addNews()">Add News</button>
+    </div>
+
+    <!-- News Table -->
+    <div class="news-table-container">
+        <table id="news-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="news-list">
+                <!-- News List will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 News Website. All rights reserved.</p>
+    </footer>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    loadNews(); // Load all news when the page is ready
+});
+
+function toggleAddNewsForm() {
+    let form = document.getElementById("add-news-form");
+    form.style.display = form.style.display === "block" ? "none" : "block";
+}
+
+function addNews() {
+    let title = document.getElementById("news-title").value;
+    let category = document.getElementById("news-category").value;
+    let image = document.getElementById("news-image").value;
+    let content = document.getElementById("news-content").value;
+
+    if (!title || !category || !image || !content) {
+        alert("All fields are required!");
+        return;
+    }
+
+    let newsData = { title, category, image, content };
+
+    fetch("http://localhost:5000/news", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newsData),
+    })
+    .then(response => response.json())
+    .then(() => {
+        alert("News added successfully!");
+        document.getElementById("add-news-form").reset();
+        toggleAddNewsForm();
+        loadNews();
+    })
+    .catch(error => console.error("Error adding news:", error));
+}
+
+function loadNews() {
+    fetch("http://localhost:5000/news")
+        .then(response => response.json())
+        .then(data => {
+            const newsList = document.getElementById("news-list");
+            newsList.innerHTML = "";
+
+            data.forEach(news => {
+                const newsRow = document.createElement("tr");
+                newsRow.innerHTML = `
+                    <td><img src="${news.image}" alt="news image"></td>
+                    <td>${news.title}</td>
+                    <td>${news.category}</td>
+                    <td>
+                        <button onclick="deleteNews('${news._id}')">Delete</button>
+                    </td>
+                `;
+                newsList.appendChild(newsRow);
+            });
+        })
+        .catch(error => console.error("Error loading news:", error));
+}
+
+function deleteNews(newsId) {
+    if (confirm("Are you sure you want to delete this news article?")) {
+        fetch(`http://localhost:5000/news/${newsId}`, { method: "DELETE" })
+        .then(response => {
+            if (response.ok) {
+                alert("News deleted successfully!");
+                loadNews();
+            } else {
+                alert("Failed to delete the news.");
+            }
+        })
+        .catch(error => console.error("Error deleting news:", error));
+    }
+}
+
+</script>
+</body>
+</html>

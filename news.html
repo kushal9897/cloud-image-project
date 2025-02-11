@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Details</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>News Details</h1>
+        <a href="index.html">← Back to Home</a>
+    </header>
+
+    <div class="news-details-container">
+        <h2 id="news-title"></h2>
+        <img id="news-image" src="" alt="News Image">
+        <p id="news-content"></p>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 News Website. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Fetch news details from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const newsId = urlParams.get('id');
+
+        if (newsId) {
+            fetch(`http://localhost:5000/news/${newsId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('news-title').innerText = data.title;
+                    document.getElementById('news-image').src = data.image;
+                    document.getElementById('news-content').innerText = data.content;
+                })
+                .catch(error => console.error('Error loading news:', error));
+        }
+    </script>
+
+</body>
+</html>

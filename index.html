@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Website</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>News Website</h1>
+    </header>
+
+    <!-- Navbar -->
+    <nav>
+        <button onclick="loadCategory('world')">World</button>
+        <button onclick="loadCategory('sports')">Sports</button>
+        <button onclick="loadCategory('technology')">Technology</button>
+        <button onclick="loadCategory('business')">Business</button>
+        <button onclick="loadCategory('entertainment')">Entertainment</button>
+        <button onclick="loadCategory('health')">Health</button>
+    </nav>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside>
+            <h2>Categories</h2>
+            <ul>
+                <li onclick="loadCategory('world')">World</li>
+                <li onclick="loadCategory('sports')">Sports</li>
+                <li onclick="loadCategory('technology')">Technology</li>
+                <li onclick="loadCategory('business')">Business</li>
+                <li onclick="loadCategory('entertainment')">Entertainment</li>
+                <li onclick="loadCategory('health')">Health</li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="news-container">
+            <!-- News Cards will be loaded here -->
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 News Website. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
