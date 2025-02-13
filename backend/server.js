@@ -1,10 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path"); // ✅ Import path module
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// ✅ Serve static frontend files
+app.use(express.static(path.join(__dirname, "frontend")));
 
 const MONGO_URI = "mongodb+srv://admin:mypassword@newsdb.gr4fn.mongodb.net/?retryWrites=true&w=majority&appName=newsdb"; // Replace with your actual connection string
 
@@ -58,6 +62,13 @@ app.delete("/news/:id", async (req, res) => {
     }
 });
 
-app.listen(5000, () => {
-    console.log("✅ Server running on http://localhost:5000");
+// ✅ Serve frontend for all other routes
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "index.html"));
+});
+
+// ✅ Start server
+const PORT = 5000;
+app.listen(PORT, () => {
+    console.log(`✅ Server running on http://localhost:${PORT}`);
 });
